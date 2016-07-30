@@ -1,0 +1,41 @@
+{
+  "name": "smart-ordering-system",
+  "description": "A smart ordering application for supermarkets",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": {
+    "name": "Abhijeet Talaulikar",
+    "email": "abhijeetstalaulikar@gmail.com"
+  },
+  "keywords": [],
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/abhijeet-talaulikar/Smart-Ordering-System"
+  },
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "busboy": "^0.2.13",
+    "connect": "^3.4.1",
+    "connect-flash": "*",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.14.0",
+    "express-session": "^1.14.0",
+    "multer": "^1.1.0",
+    "mysql": "^2.11.1",
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0",
+    "socket.io": "^1.4.8"
+  },
+  "files": [
+    "README.md",
+    "index.js",
+    "admin/",
+    "public/",
+    "db/",
+    "config/",
+    "models/",
+    "controllers/",
+    "views/"
+  ]
+}
