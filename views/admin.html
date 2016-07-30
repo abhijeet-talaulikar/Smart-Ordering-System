@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Admin</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/style/admin.css">
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+  	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+	<script src="/script/routing.js"></script>
+</head>
+<body>
+<div ng-app="admin" ng-controller="myCtrl" ng-init="populate()">
+<nav class="navbar navbar-default" id="menu">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="#">Admin</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li class="mytab status"><a href="javascript:loadAdminPage('status');" ng-click="GetCounterStat()">
+            <span class="glyphicon glyphicon-info-sign"></span> Status</a></li>
+        <li class="mytab orders"><a href="javascript:loadAdminPage('orders');" ng-click="fetchOrders()">
+            <span class="glyphicon glyphicon-th-list"></span> Orders</a></li>
+        <li class="mytab inventory"><a href="javascript:loadAdminPage('inventory');"><span class="glyphicon glyphicon-wrench"></span> Inventory</a></li>
+        <li class="mytab people"><a href="javascript:loadAdminPage('people');">
+            <span class="glyphicon glyphicon-user"></span> People</a></li>
+        <li><a href="/admin/logout"><span class="glyphicon glyphicon-off"></span> Logout</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<br /><br /><br />
+
+<div class="container">
+    
+    <div id="route">
+    
+    <!--status tab-->
+    <div id="a_status">
+        <div class="page-header">
+			<h4>Status</h4>
+		</div>
+        <div class="alert" ng-class="cstat('A')">
+            <strong>Counter A &nbsp;&nbsp;:&nbsp;&nbsp; </strong> //counterStat.counters.A//
+            &nbsp;&nbsp;&nbsp;
+            <span ng-if="counterStat.counters.A >= counterStat.thresholds[0]">(occupied)</span>
+        </div>
+        <div class="alert" ng-class="cstat('B')">
+            <strong>Counter B &nbsp;&nbsp;:&nbsp;&nbsp; </strong> //counterStat.counters.B//
+            &nbsp;&nbsp;&nbsp;
+            <span ng-if="counterStat.counters.B >= counterStat.thresholds[1]">(occupied)</span>
+        </div>
+        <div class="alert" ng-class="cstat('C')">
+            <strong>Counter C &nbsp;&nbsp;:&nbsp;&nbsp; </strong> //counterStat.counters.C//
+            &nbsp;&nbsp;&nbsp;
+            <span ng-if="counterStat.counters.C >= counterStat.thresholds[2]">(occupied)</span>
+        </div>
+    </div><!--end status tab-->
+        
+    <!--orders tab-->
+    <div id="a_orders">
+        <div class="page-header">
+			<h4>Orders</h4>
+		</div>
+        <div class="row">
+            <div class="col-sm-6">
+                <p class="r_count text-success">
+                //o_count// search results returned.
+                </p>
+            </div>
+            <div class="col-sm-1"></div>
+            <div class="col-sm-5">
+                <form role="form" class="form-horizontal">
+                Filter by: <input type="text" id="search_o" placeholder="Customer name" />
+                    <button type="submit" class="btn btn-default" ng-click="searchOrders()">
+                    <span class="glyphicon glyphicon-search"></span></button>
+                    <button type="button" class="btn btn-default" ng-click="fetchOrders()">View all</button>
+                </form>
+            </div>
+        </div>
+        <br />
+		<div class="well" ng-repeat="x in results">
+            <div class="row">
+                <div class="col-sm-6">
+                    <h5>Order ID: //x['oid']// 
+                        <span ng-if="!x['status']">
+                        &nbsp;&nbsp; | &nbsp;&nbsp; Counter: //getCounter(x['counter'])//
+                        &nbsp;&nbsp; | &nbsp;&nbsp; Scheduled at: //x['scheduled']//
+                        </span>
+                    </h5>
+                </div>
+                <div class="col-sm-6">
+                    <p class="text-right">
+                        <button type="button" class="btn btn-default btn-sm" ng-if="!x['status']" ng-click="FulfilOrder(x['oid'], $index)">
+                            <span class="glyphicon glyphicon-thumbs-up"></span> Fulfill
+                        </button>
+                        <button type="button" class="btn btn-default btn-sm" ng-if="!x['status']" ng-click="removeOrder(x['oid'], $index)">
+                            <span class="glyphicon glyphicon-remove"></span> Cancel
+                        </button>
+                        <span ng-if="x['status']"><span class="glyphicon glyphicon-ok"></span> Fulfilled</span>
+                    </p>
+                </div>
+            </div>
+			<table class="table table-striped orders-tab">
+				<thead>
+				  <tr>
+					<th>Item</th>
+					<th>Quantity</th>
+					<th>Price</th>
+				  </tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="y in item_db_names" ng-if="x[y]">
+						<td><p>//item_names[$index]//</p></td>
+						<td><p>//x[y]//</p></td>
+						<td><p>&dollar; //x[y]*item_prices[$index]// /-</p></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td></td>
+						<td><p>Total: &dollar; //x['total']// /-</p></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+    </div><!--end orders tab-->
+    
+    <!--inventory tab-->
+    <div id="a_inventory">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="jumbotron">
+                    <h3>Find items</h3>
+                    <br />
+                    <h5>You may view or edit inventory items.</h5>
+                    <br />
+                    <form role="form" class="form-horizontal">
+                        <input type="text" name="name" id="search_i" placeholder="Search by name" />
+                        <button type="submit" class="btn btn-default" ng-click="searchItems()">Search</button>
+                        <button type="button" class="btn btn-default" onclick="$('#inv_r').hide();$('#search_i').val('');">Close search</button>
+                        <br />
+                    </form>
+                    <br /><br />
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="jumbotron">
+                    <h3>Create item</h3>
+                    <br />
+                    <form role="form" class="form-horizontal" id="i_create" method="POST" action="/admin/add/inventory" enctype="multipart/form-data" target="_blank">
+                        <input type="text" name="name" id="i_name" placeholder="Enter name" required />
+                        <input type="number" name="price" id="i_price" placeholder="Enter price" style="width:30%" required />
+                        <input type="number" name="stock" id="i_stock" placeholder="Enter stock" style="width:25%" required />
+                        <br /><br />
+                        <input type="file" name="image" id="i_img" accept="image/*" required /><br />
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <button type="submit" class="btn btn-default" ng-click="createItem()">Create my item</button> 
+                            </div>
+                            <div class="col-sm-8">
+                                <p class="text-success" id="i_done"><span class="glyphicon glyphicon-ok"></span> Done</p>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!--search results-->
+        <div class="row" id="inv_r">
+            <div class="col-sm-4" ng-repeat="x in results">
+                <div class="well well-sm shop">
+                    <p class="text-right"><a href="#!" ng-click="removeItem(x['id'],$index)"><span class="glyphicon glyphicon-trash"></span> Delete</a></p>
+                    <h5 class="text-center">//x['name']//</h5>
+                    <img src="/images/items//x['image']//" class="thumbnail" />
+                    <div class="centered">
+                        <p>&nbsp;&nbsp; Price: &dollar; //x['price']//</p>
+                        <p>&nbsp;&nbsp; Stock: //x['stock']//</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--end search results-->
+        
+    </div><!--end inventory tab-->
+    
+    <!--people tab-->
+    <div id="a_people">
+        <div class="jumbotron">
+            <h3>Find people</h3>
+            <br />
+            <h5>You may view the profile of any of your customers. Be sure that the customer has been registered with The Grocery Store.</h5>
+            <br />
+            <form>
+                <input type="text" name="name" id="search_n" placeholder="Search by name" />
+                <button type="submit" class="btn btn-default" ng-click="searchPeople()">Search</button>
+                <button type="button" class="btn btn-default" onclick="$('#people_r').hide();$('#search_n').val('');">Close search</button>
+                <br />
+            </form>
+        </div>
+        <!--search results-->
+        <table class="table table-striped" id="people_r">
+            <thead>
+                <tr>
+                <th></th>
+                <th>Username</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="x in results">
+                    <td>//$index+1//</td>
+                    <td>//x['username']//</td>
+                </tr>
+            </tbody>
+        </table>
+        <!--end search results-->
+    </div><!--end people tab-->
+        
+    </div><!--end route-->
+
+</div> <!-- container ends -->
+
+<script src="/script/admin.js"></script>
+
+</div> <!-- end angular app -->
+
+</body>
+</html>

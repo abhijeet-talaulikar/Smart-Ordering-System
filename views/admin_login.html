@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Login</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/style/layout.css">
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+  	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="jumbotron" id="bwbg">
+        <h1 class="text-center">The Grocery Store</h1> 
+        <h4 class="text-center">Working towards a simplistic shopping experience...</h4> 
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="panel panel-default customer-login">
+                <div class="panel-heading"><h4>Administrator Login</h4></div>
+                <div class="panel-body">
+                    <form role="form" class="form-horizontal" method="POST" action="/admin/login">
+                        <div class="form-group">
+                            <input type="text" name="username" placeholder="Username" value="admin" /><br /><br />
+                            <input type="password" name="password" placeholder="Password" value="root" /><br /><br />
+                            <input type="submit" class="btn btn-default" value="Log in" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,70 @@
+body {
+	padding:0;
+	margin:0;
+}
+h1,h2,h3,h4,h5 {
+	color:#5e5e5e;
+}
+input, button {
+	color:#5e5e5e;
+}
+input[type='text'], input[type='password'], input[type='email'], input[type='number'] {
+	padding:5px;
+}
+#menu {
+	position:fixed;
+	width:100%;
+	z-index:10;
+}
+#menu .container-fluid {
+	width:80%;
+	min-width:200px;
+	margin:0 auto;
+}
+.panel .panel-body .form-group{
+	margin:0 auto;
+}
+.shop .thumbnail {
+	width:150px;
+	height:150px;
+	margin:0 auto;
+}
+.shop .quantity {
+	width:50px;
+	padding:6px;
+}
+.shop p {
+	color:#5e5e5e;
+}
+.shop .centered {
+	width:50%;
+	min-width:120px;
+	padding-top:5px;
+	margin:0 auto;
+}
+.pag {
+	width:70%;
+	margin:0 auto;
+}
+
+.orders-tab td{
+    width:33%;
+}
+
+#a_status, #a_orders, #a_inventory, #a_people {
+	display:none;
+}
+
+#people_r, #inv_r {
+    display:none;
+}
+
+.r_count {
+    display:none;
+}
+
+#i_done {
+    display:none;
+    font-size:14px;
+    padding-top:5px;
+}

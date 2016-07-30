@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Login</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/style/layout.css">
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+  	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="jumbotron" id="bwbg">
+        <h1 class="text-center">The Grocery Store</h1> 
+        <h4 class="text-center">Working towards a simplistic shopping experience...</h4> 
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="panel panel-default customer-login">
+                <div class="panel-heading"><h4>Log in to your account</h4></div>
+                <div class="panel-body">
+                    <form role="form" class="form-horizontal" method="POST" action="/authenticate">
+                        <div class="form-group">
+                            <input type="text" name="username" placeholder="Username" value="abhijeet" /><br /><br />
+                            <input type="password" name="password" placeholder="Password" value="mypass" /><br /><br />
+                            <button type="submit" class="btn btn-default">Log in</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="panel panel-default customer-login" ng-app="veriPass" ng-controller="myCtrl">
+                <div class="panel-heading"><h4>Create a new account</h4></div>
+                <div class="panel-body">
+                    <form role="form" id="signup" class="form-horizontal" method="POST" action="/signup">
+                        <div class="form-group">
+                            <input type="text" name="username" ng-model="username" placeholder="Enter a username" /><br /><br />
+                            <input type="password" ng-model="pass" name="password" placeholder="Type a password" /><br /><br />
+                            <input type="password" ng-model="cpass" id="cpass" name="cpassword" placeholder="Confirm password" ng-change="matchPass()" /> &nbsp; 
+                            <p id="passAlert" class="text-danger">Passwords don't match!</p>
+                            <br /><br />
+                            <input type="submit" ng-disabled="verify()" class="btn btn-default" value="Create account" />
+                        </div>
+                    </form>
+                </div>
+                <script>
+                var veriPass = angular.module('veriPass', [], function($interpolateProvider) {
+                    $interpolateProvider.startSymbol('//');
+                    $interpolateProvider.endSymbol('//');
+                });
+                veriPass.controller('myCtrl', function($scope, $http) {
+                    $scope.matchPass = function() {
+                        var Alert =  document.getElementById('passAlert');
+                        if($scope.pass != $scope.cpass) {
+                            Alert.style.visibility = "visible";
+                            return false;
+                        }
+                        else {
+                            Alert.style.visibility = "hidden";
+                            return true;
+                        }
+                    };
+                    
+                    $scope.verify = function() {
+                        if(($scope.pass == $scope.cpass) && $scope.pass && $scope.cpass && $scope.username) return false;
+                        return true;
+                    }
+                });
+                </script>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

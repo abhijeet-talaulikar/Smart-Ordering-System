@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Dashboard</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/style/layout.css">
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+  	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+	<script src="/script/routing.js"></script>
+</head>
+<body>
+<div ng-app="cart" ng-controller="myCtrl" ng-init="populate()">
+<nav class="navbar navbar-default" id="menu" ng-mousemove="fetchOrders()">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="#">DashBoard</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+	    <li class="mytab myshop"><a href="javascript:loadPage('shop');"><span class="glyphicon glyphicon-home"></span> Shop</a></li>
+        <li class="mytab mycart"><a href="javascript:loadPage('cart');">
+            <span class="glyphicon glyphicon-shopping-cart"></span> 
+            Cart (//count//)</a></li>
+            <li class="mytab myorders"><a href="javascript:loadPage('orders');" ng-click="fetchOrders()">
+                <span class="glyphicon glyphicon-th-list"></span> Orders</a></li>
+        <li><a href="/logout">
+            <span class="glyphicon glyphicon-off"></span> Logout (//user.username//)</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<br /><br />
+
+<div class="container" ng-mousemove="fetchOrders()">
+
+<div id="route">
+
+<!--start tabs-->
+<div id="shop_tab">
+	<div class="page-header">
+		<h4>Place order | <small style="cursor:pointer;" onclick="loadPage('cart');">View my cart (//count//)</small></h4>
+	</div>
+	<div class="row">
+		<div class="col-sm-4" ng-repeat="x in item_names">
+			<div class="well well-sm shop">
+				<h5 class="text-center">//item_names[$index]//</h5>
+				<img src="/images/items//item_images[$index]//" class="thumbnail" />
+				<div class="centered">
+                    <p>Price: &dollar; //item_prices[$index]//</p>
+					<p>Select Quantity: </p>
+					<input type="number" value="1" class="quantity" id="//item_qbox[$index]//" />
+					<button class="btn btn-sm btn-default" ng-click="add($index)">Add</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--cart tab-->
+<div id="cart_tab">
+		<div class="page-header">
+			<h4>My Cart | &nbsp;&nbsp;<small ng-if="count" style="cursor:pointer;" onclick="loadPage('checkout');"><span class="glyphicon glyphicon-ok-circle"></span> Proceed to Checkout</small></h4>
+		</div>
+		<div class="row">
+			<div class="col-sm-4" ng-repeat="x in item_names" ng-if="items[$index]">
+				<div class="well well-sm shop">
+                    <p class="text-right"><a href="#!" ng-click="remove($index)"><span class="glyphicon glyphicon-trash"></span> Remove</a></p>
+					<h5 class="text-center">//item_names[$index]//</h5>
+					<img src="/images/items//item_images[$index]//" class="thumbnail" />
+					<div class="centered">
+						<p>Quantity: <input type="number" ng-model="items[$index]" ng-change="reCount()" class="quantity" /></p>
+					</div>
+				</div>
+			</div>
+			<div class="well" ng-if="!count"><p>No items in cart.</p></div>
+		</div>
+</div>
+
+<!--orders tab-->
+<div id="orders_tab">
+		<div class="page-header">
+			<h4>My Orders</h4>
+		</div>
+		<div class="well" ng-repeat="x in orders">
+            <div class="row">
+                <div class="col-sm-6">
+                    <h5>Order ID: //x['oid']// 
+                        &nbsp;&nbsp; | &nbsp;&nbsp; Counter: //getCounter(x['counter'])//
+                        &nbsp;&nbsp; | &nbsp;&nbsp; Scheduled at: //x['scheduled']//
+                    </h5>
+                </div>
+                <div class="col-sm-6">
+                    <p class="text-right">
+                        <span ng-if="!x['status']"><span class="glyphicon glyphicon-hourglass"></span> Pending
+                        &nbsp;&nbsp;
+                        <button type="button" class="btn btn-default btn-sm" ng-if="!x['status']" ng-click="removeOrder(x['oid'], $index)">
+                            <span class="glyphicon glyphicon-remove"></span> Cancel
+                        </button>
+                        </span>
+                    </p>
+                </div>
+            </div>
+			<table class="table table-striped orders-tab">
+				<thead>
+				  <tr>
+					<th>Item</th>
+					<th>Quantity</th>
+					<th>Price</th>
+				  </tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="y in item_db_names" ng-if="x[y]">
+						<td><p>//item_names[$index]//</p></td>
+						<td><p>//x[y]//</p></td>
+						<td><p>&dollar; //x[y]*item_prices[$index]// /-</p></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td></td>
+						<td><p>Total: &dollar; //x['total']// /-</p></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+</div>
+
+
+<!--checkout tab-->
+<div id="checkout_tab">
+		<div class="page-header">
+			<h4>Order Summary</h4>
+		</div>
+		<div class="well" ng-if="!count"><p>No items in cart.</p></div>
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="well" ng-if="count">
+					<table class="table table-striped">
+					<thead>
+					  <tr>
+						<th>Item</th>
+						<th>Quantity</th>
+						<th>Price</th>
+					  </tr>
+					</thead>
+					<tbody>
+					  <tr ng-repeat="x in item_names" ng-if="items[$index]">
+						<td><p>//item_names[$index]//</p></td>
+						<td><p>//items[$index]//</p></td>
+						<td>&dollar; //items[$index] * item_prices[$index]// /-</td>
+					  </tr>
+					</tbody>
+				  </table>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="well" ng-if="count">
+					<h4>Total Amount: </h4>
+					<h5>&dollar; //total()// /-</h5>
+					<br />
+					<button class="btn btn-primary" ng-click="purchase()">Purchase</button>
+				</div>
+			</div>
+		</div>
+
+</div>
+
+<!--success tab-->
+<div id="success_tab">
+	<div class="page-header">
+		<h4>Order complete</h4>
+	</div>
+	<p>Your order was completed successfully.</p>
+</div>
+
+<!--failure tab-->
+<div id="failure_tab">
+	<div class="page-header">
+		<h4>Oops!</h4>
+	</div>
+	<p>The order could not be completed. Please try again later.</p>
+</div>
+
+
+<!--end tabs-->
+
+</div><!--end route-->
+
+</div> <!-- container ends -->
+
+<script src="/script/angular.js"></script>
+
+</div> <!-- end angular app -->
+
+</body>
+</html>
